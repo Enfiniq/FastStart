@@ -1,21 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateFastKey, validateFastKey } from "@/utils/fastKeys";
 import { getRawRegistry } from "@/utils/registry";
-
-interface KeyRequest {
-  fastStartName: string;
-}
-
-interface Registry {
-  fastStarts: {
-    [fastStartName: string]: {
-      fastStart: string;
-      author: string;
-      type: string;
-      versions: string[];
-    };
-  };
-}
+import { KeyRequest, Registry } from "@/types/key";
 
 export async function POST(request: NextRequest) {
   try {
