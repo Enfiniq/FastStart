@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios, { AxiosInstance } from "axios";
 
-const GITHUB_API_URL = "https://api.github.com";
-let octokit: AxiosInstance;
-let REPO_OWNER: string | undefined;
-let REPO_NAME: string | undefined;
+export const CENTRAL_REGISTRY_PATH = "registry.json";
+export const GITHUB_API_URL = "https://api.github.com";
+export let octokit: AxiosInstance;
+export let REPO_OWNER: string | undefined;
+export let REPO_NAME: string | undefined;
 
-function ensureInitialized() {
+export function ensureInitialized() {
   if (!octokit || !REPO_OWNER || !REPO_NAME) {
     const GITHUB_TOKEN = process.env.FASTSTART_GITHUB_TOKEN;
     REPO_OWNER = process.env.FASTSTART_REPO_OWNER || "Enfiniq";
@@ -26,7 +27,7 @@ function ensureInitialized() {
   }
 }
 
-const getFile = async (path: string) => {
+export const getFile = async (path: string) => {
   ensureInitialized();
   try {
     const response = await octokit.get(
@@ -38,7 +39,11 @@ const getFile = async (path: string) => {
   }
 };
 
-const updateFile = async (path: string, content: string, sha: string) => {
+export const updateFile = async (
+  path: string,
+  content: string,
+  sha: string
+) => {
   ensureInitialized();
   try {
     const response = await octokit.put(
@@ -55,9 +60,7 @@ const updateFile = async (path: string, content: string, sha: string) => {
   }
 };
 
-const CENTRAL_REGISTRY_PATH = "registry.json";
-
-function checkAuth(request: NextRequest) {
+export function checkAuth(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const secret = process.env.FASTSTART_REGISTRY_ACCESS_SECRET_KEY;
 
@@ -106,7 +109,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
   const authError = checkAuth(request);
   if (authError) {
     return authError;
@@ -128,6 +131,64 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  } catch (error: unknown) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const authError = checkAuth(request);
+  if (authError) {
+    return authError;
+  }
+
+  ensureInitialized();
+  try {
+    const { searchParams } = new URL(request.url);
+    const packageName = searchParams.get("packageName");
+
+    if (!packageName) {
+      return NextResponse.json(
+        { error: "Missing packageName parameter" },
+        { status: 400 }
+      );
+    }
+
+    const file = await getFile(CENTRAL_REGISTRY_PATH);
+    if (!file) {
+      return NextResponse.json(
+        { error: "Registry not found" },
+        { status: 404 }
+      );
+    }
+
+    const content = Buffer.from(file.content, "base64").toString();
+    const registry = JSON.parse(content);
+
+    if (!registry.fastStarts || !registry.fastStarts[packageName]) {
+      return NextResponse.json(
+        { error: `Package '${packageName}' not found in registry` },
+        { status: 404 }
+      );
+    }
+
+    delete registry.fastStarts[packageName];
+
+    const updatedContent = JSON.stringify(registry, null, 2);
+    const response = await updateFile(
+      CENTRAL_REGISTRY_PATH,
+      updatedContent,
+      file.sha
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: `Package '${packageName}' deleted from registry`,
+      response,
+    });
   } catch (error: unknown) {
     return NextResponse.json(
       { error: (error as Error).message },

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.54.0",
     "@xenova/transformers": "^2.6.2",
     "axios": "^1.11.0",
     "next": "15.4.5",

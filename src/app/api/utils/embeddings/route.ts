@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       text: text,
       embeddings: embeddings,
-      dimensions: "384",
+      dimensions: 384,
     });
   } catch (error) {
     console.error("Error generating embeddings:", error);
