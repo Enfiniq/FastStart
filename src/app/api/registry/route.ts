@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios, { AxiosInstance } from "axios";
 
-export const CENTRAL_REGISTRY_PATH = "registry.json";
-export const GITHUB_API_URL = "https://api.github.com";
-export let octokit: AxiosInstance;
-export let REPO_OWNER: string | undefined;
-export let REPO_NAME: string | undefined;
+const CENTRAL_REGISTRY_PATH = "registry.json";
+const GITHUB_API_URL = "https://api.github.com";
+let octokit: AxiosInstance;
+let REPO_OWNER: string | undefined;
+let REPO_NAME: string | undefined;
 
-export function ensureInitialized() {
+function ensureInitialized() {
   if (!octokit || !REPO_OWNER || !REPO_NAME) {
     const GITHUB_TOKEN = process.env.FASTSTART_GITHUB_TOKEN;
     REPO_OWNER = process.env.FASTSTART_REPO_OWNER || "Enfiniq";
@@ -27,7 +27,7 @@ export function ensureInitialized() {
   }
 }
 
-export const getFile = async (path: string) => {
+const getFile = async (path: string) => {
   ensureInitialized();
   try {
     const response = await octokit.get(
@@ -39,11 +39,7 @@ export const getFile = async (path: string) => {
   }
 };
 
-export const updateFile = async (
-  path: string,
-  content: string,
-  sha: string
-) => {
+const updateFile = async (path: string, content: string, sha: string) => {
   ensureInitialized();
   try {
     const response = await octokit.put(
@@ -60,7 +56,7 @@ export const updateFile = async (
   }
 };
 
-export function checkAuth(request: NextRequest) {
+function checkAuth(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const secret = process.env.FASTSTART_REGISTRY_ACCESS_SECRET_KEY;
 

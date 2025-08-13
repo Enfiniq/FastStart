@@ -15,7 +15,8 @@
     "next": "15.4.5",
     "nodemailer": "^7.0.5",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "swagger-ui-react": "^5.27.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -24,6 +25,7 @@
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/swagger-ui-react": "^5.18.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
     "tailwindcss": "^4",
