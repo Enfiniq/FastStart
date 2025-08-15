@@ -9,10 +9,11 @@ FastStart is a Registry for reusable code snippets with email and embeddings uti
   - **Body:** `{fastStartName: string}`
   - **Auth:** None
 
+
 ### 2. **database** - PostgreSQL Management
-- **GET `/api/database`** - List packages
+* **GET `/api/database`** - List packages
   - **Query:** `{name?: string, author?: string, type?: string, limit?: number, offset?: number}`
-  - **Auth:** FastStartKey
+  - **Auth:** None
 
 - **POST `/api/database`** - Sync to GitHub
   - **Body:** `{name: string}`
@@ -69,15 +70,15 @@ FastStart is a Registry for reusable code snippets with email and embeddings uti
 ### 8. **registry** - Admin Access
 - **GET `/api/registry`** - Get registry data
   - **Query:** `{action?: "getRegistry"}`
-  - **Auth:** Admin
+  - **Auth:** Admin, No public testing for security purpose
 
 - **PUT `/api/registry`** - Update registry
   - **Body:** `{action: "updateRegistry", registry: object, sha: string}`
-  - **Auth:** Admin
+  - **Auth:** Admin, No public testing for security purpose
 
 - **DELETE `/api/registry`** - Remove package
   - **Query:** `{packageName: string}`
-  - **Auth:** Admin
+  - **Auth:** Admin, No public testing for security purpose
 
 ---
 

@@ -342,7 +342,6 @@
         "tags": ["Database"],
         "summary": "List packages from database",
         "description": "Lists packages from PostgreSQL database with filtering and pagination",
-        "security": [{ "FastStartKey": [] }],
         "parameters": [
           {
             "name": "name",
@@ -403,7 +402,6 @@
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
           "500": { "$ref": "#/components/responses/InternalServerError" }
         }
       },

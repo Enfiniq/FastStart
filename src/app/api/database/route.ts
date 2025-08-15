@@ -4,12 +4,6 @@ import { getRegistry, updateRegistry } from "@/utils/registry";
 import { checkAuth } from "@/utils/database";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const name = searchParams.get("name");
-
-  const authError = checkAuth(request, name || undefined);
-  if (authError) return authError;
-
   try {
     const { searchParams } = new URL(request.url);
     const name = searchParams.get("name");
@@ -20,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from("faststarts")
-      .select("*")
+      .select("*", { count: "exact" })
       .order("created_at", { ascending: false });
 
     if (name) {
